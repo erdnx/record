@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
     s.name             = 'record_darwin'
     s.version          = '1.0.0'
-    s.summary          = 'record package for macOS implementation'
+    s.summary          = 'record package for iOS and macOS implementations'
     s.description      = <<-DESC
   A Flutter plugin for voice recording.
                          DESC
@@ -13,8 +13,9 @@ Pod::Spec.new do |s|
     s.source_files = 'Classes/**/*'
     s.public_header_files = 'Classes/**/*.h'
     s.swift_version    = '5.0'
-    s.dependency 'FlutterMacOS'
+    s.ios.dependency 'Flutter'
+    s.osx.dependency 'FlutterMacOS'
+    s.ios.deployment_target = '11.0'
     s.osx.deployment_target = '10.15'
-    s.resource_bundles = {'record_darwin_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
     s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   end

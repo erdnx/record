@@ -13,7 +13,7 @@ func listInputs() throws -> [Device] {
 func listInputDevices() throws -> [AVAudioSessionPortDescription]? {
   let audioSession = AVAudioSession.sharedInstance()
   let options: AVAudioSession.CategoryOptions = [.defaultToSpeaker, .allowBluetooth]
-
+  
   do {
     try audioSession.setCategory(.playAndRecord, options: options)
   } catch {
@@ -45,14 +45,11 @@ private func setInput(_ config: RecordConfig) throws {
 
 extension AudioRecordingDelegate {
   func initAVAudioSession(config: RecordConfig) throws {
-    if !(config.iosConfig?.manageAudioSession ?? false) {
-      return
-    }
-
     let audioSession = AVAudioSession.sharedInstance()
-
+    let options: AVAudioSession.CategoryOptions = [.defaultToSpeaker, .allowBluetooth, .allowBluetoothA2DP]
+    
     do {
-        try audioSession.setCategory(.playAndRecord, options: AVAudioSession.CategoryOptions(config.iosConfig?.categoryOptions ?? []))
+      try audioSession.setCategory(.playAndRecord, options: options)
     } catch {
       throw RecorderError.error(message: "Failed to start recording", details: "setCategory: \(error.localizedDescription)")
     }
@@ -62,7 +59,7 @@ extension AudioRecordingDelegate {
     } catch {
       throw RecorderError.error(message: "Failed to start recording", details: "setPreferredSampleRate: \(error.localizedDescription)")
     }
-    
+      
     if #available(iOS 14.5, *) {
       do {
         try audioSession.setPrefersNoInterruptionsFromSystemAlerts(true)
@@ -108,7 +105,18 @@ extension AudioRecordingDelegate {
     }
     
     if type == AVAudioSession.InterruptionType.began {
-      pause()
+      getParentRecorder()?.pause()
     }
+//      else if type == AVAudioSession.InterruptionType.ended {
+//        guard let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
+//        let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+//        if options.contains(.shouldResume) {
+//           do {
+//             try getParentRecorder()?.resume()
+//           } catch {
+//               getParentRecorder()?.stop(completionHandler: {(path) -> () in })
+//           }
+//         }
+//    }
   }
 }

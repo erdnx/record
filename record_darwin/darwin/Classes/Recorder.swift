@@ -29,10 +29,7 @@ class Recorder {
       )
     }
     
-    let delegate = RecorderFileDelegate(
-      onPause: {() -> () in self.updateState(RecordState.pause)},
-      onStop: {() -> () in self.updateState(RecordState.stop)}
-    )
+    let delegate = RecorderFileDelegate()
     
     try delegate.start(config: config, path: path)
     
@@ -51,10 +48,7 @@ class Recorder {
       )
     }
     
-    let delegate = RecorderStreamDelegate(
-      onPause: {() -> () in self.updateState(RecordState.pause)},
-      onStop: {() -> () in self.updateState(RecordState.stop)}
-    )
+    let delegate = RecorderStreamDelegate()
     
     try delegate.start(config: config, recordEventHandler: m_recordEventHandler)
     
@@ -121,10 +115,6 @@ class Recorder {
   }
 
   private func updateState(_ state: RecordState) {
-    if (m_state == state) {
-      return
-    }
-
     m_state = state
     
     if let eventSink = m_stateEventHandler.eventSink {
